@@ -1,6 +1,6 @@
 /*a side scroller based on catch and deliver
-catching an object/thing and delivering it to a point defeating enemies 
-and objects in the way*/
+catching an object/thing and delivering it to a point
+defeating enemies and objects in the way*/
 
 /*if this does not work possibly a game with finding objects in a maze*/
 
@@ -12,6 +12,12 @@ let col
 let row;
 let w = 80;
 let grid = [];
+
+let r_x = 0;
+let r_y = 0;
+
+let e_x = 600;
+let e_y = 600;
 
 let cur;
 
@@ -44,7 +50,7 @@ function draw() {
   }
 
   cur.visited = true;
-  cur.highlight();
+  //cur.highlight();
   // checks the neighbors to see if it has gone to it
   var next = cur.checkNeighbors();
   if (next) {
@@ -58,10 +64,23 @@ function draw() {
   } else if (stack.length > 0) {
     cur = stack.pop();
   }
-	
-	rect(mouseX, mouseY, w/2, w/2);
+	fill(255,213,0);
+	rect(r_x,r_y,w/2,w/2);
+	keyPressed(rect);
+		
+		
 }
-
+function keyPressed(rect) {
+  if (keyCode === UP_ARROW) {
+		r_x-= 5;
+  } else if (keyCode === DOWN_ARROW) {
+    r_x+=5;
+  } else if(keyCode === RIGHT_ARROW){
+		r_y += 5;
+	} else if(keyCode ===LEFT_ARROW){
+		r_y-=5;
+	}
+}
 
 function index(i, j) {
   if (i < 0 || j < 0 || i > col-1 || j > row-1) {
@@ -72,8 +91,8 @@ function index(i, j) {
 /*function preload() {
  mySound = loadSound('176005_quartzgate_qvarz-5 (online-audio-converter.com).mp3');
 }*/
-// remvoes the walls, going around the rectangle 
-//to remove the wall ie 3 is left and 1 is right and the corespponding walls for 0 and 2
+// remvoes the walls, going around the rectangle to
+//remove the wall ie 3 is left and 1 is right and the corespponding walls for 0 and 2
 function removeWalls(a, b) {
 //	mySound.play();
   let x = a.i - b.i;
@@ -134,16 +153,16 @@ function Cell(i, j) {
 		
   }
 	
-	
-  this.highlight = function() { //the way that makes it appear that walls are removed
+	/*
+  this.highlight = function() { //the rectangle that goes thriugh to remove walls
     let x = this.i*w;
     let y = this.j*w;
     noStroke();
     fill(255,98,80);
     rect(x, y, w, w);
-  }
+  }*/
 	
-	this.end = function(){//suppose to create a rectangle to show end
+	this.end = function(){//suppose to create a rect to show end
 		let x = this.i*w;
 		let y = this.j*w;
 		fill(0,137,0,100);
