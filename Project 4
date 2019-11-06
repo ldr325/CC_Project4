@@ -23,8 +23,9 @@ let cur;
 
 var stack = [];
 
+
 function setup() {
-  createCanvas(600, 600);
+  createCanvas(650, 650);
   col = floor(width/w);
   row = floor(height/w);
   //frameRate(5);
@@ -34,7 +35,7 @@ function setup() {
     for (let i = 0; i < col; i++) {
       let cell = new Cell(i, j);
       grid.push(cell);
-			cell.end();
+			//cell.end();
     }
   }
 
@@ -64,23 +65,26 @@ function draw() {
   } else if (stack.length > 0) {
     cur = stack.pop();
   }
+	
 	fill(255,213,0);
-	rect(r_x,r_y,w/2,w/2);
-	keyPressed(rect);
-		
-		
+	rect(r_x,r_y,w,w);
+	keyPressed(r_x,r_y);
+
+	
 }
-function keyPressed(rect) {
+function keyPressed(x,y) {
   if (keyCode === UP_ARROW) {
-		r_x-= 5;
+		x-= 5;
   } else if (keyCode === DOWN_ARROW) {
-    r_x+=5;
+    x+=5;
   } else if(keyCode === RIGHT_ARROW){
-		r_y += 5;
+		y += 5;
 	} else if(keyCode ===LEFT_ARROW){
-		r_y-=5;
+		y-=5;
 	}
 }
+
+
 
 function index(i, j) {
   if (i < 0 || j < 0 || i > col-1 || j > row-1) {
@@ -113,6 +117,12 @@ function removeWalls(a, b) {
   }
 	//mySound.stop();
 }
+
+function end(){
+	fill(0,137,0);
+	rect(600,600,w,w);
+	//if(
+		}
 
 
 //class/function for the 'cells' in the grid that later become the maze
@@ -162,12 +172,6 @@ function Cell(i, j) {
     rect(x, y, w, w);
   }*/
 	
-	this.end = function(){//suppose to create a rect to show end
-		let x = this.i*w;
-		let y = this.j*w;
-		fill(0,137,0,100);
-		rect(x,y,w,w);
-	}
   //creates the grid\\
   this.show = function() {
     let x = this.i*w;
