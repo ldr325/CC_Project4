@@ -1,0 +1,176 @@
+/*a side scroller based on catch and deliver
+catching an object/thing and delivering it to a point defeating enemies 
+and objects in the way*/
+
+/*if this does not work possibly a game with finding objects in a maze*/
+
+
+
+
+
+let col 
+let row;
+let w = 80;
+let grid = [];
+
+let cur;
+
+var stack = [];
+
+function setup() {
+  createCanvas(600, 600);
+  col = floor(width/w);
+  row = floor(height/w);
+  //frameRate(5);
+
+	//creates grid to layout maze\\
+  for (let   j = 0; j < row; j++) {
+    for (let i = 0; i < col; i++) {
+      let cell = new Cell(i, j);
+      grid.push(cell);
+			cell.end();
+    }
+  }
+
+  cur = grid[0]; //first position
+	
+
+}
+
+function draw() {
+  background(51);
+  for (let i = 0; i < grid.length; i++) {
+    grid[i].show();
+  }
+
+  cur.visited = true;
+  cur.highlight();
+  // checks the neighbors to see if it has gone to it
+  var next = cur.checkNeighbors();
+  if (next) {
+    next.visited = true;
+
+    stack.push(cur);//backtracking
+		
+    removeWalls(cur, next);//removes wall
+		
+    cur = next;
+  } else if (stack.length > 0) {
+    cur = stack.pop();
+  }
+	
+	rect(mouseX, mouseY, w/2, w/2);
+}
+
+
+function index(i, j) {
+  if (i < 0 || j < 0 || i > col-1 || j > row-1) {
+    return -1;
+  }
+  return i + j * col;
+}
+/*function preload() {
+ mySound = loadSound('176005_quartzgate_qvarz-5 (online-audio-converter.com).mp3');
+}*/
+// remvoes the walls, going around the rectangle 
+//to remove the wall ie 3 is left and 1 is right and the corespponding walls for 0 and 2
+function removeWalls(a, b) {
+//	mySound.play();
+  let x = a.i - b.i;
+  if (x == 1) {
+    a.walls[3] = false;
+    b.walls[1] = false;
+  } else if (x == -1) {
+    a.walls[1] = false;
+    b.walls[3] = false;
+  }
+  let y = a.j - b.j;
+  if (y == 1) {
+    a.walls[0] = false;
+    b.walls[2] = false;
+  } else if (y == -1) {
+    a.walls[2] = false;
+    b.walls[0] = false;
+  }
+	//mySound.stop();
+}
+
+
+//class/function for the 'cells' in the grid that later become the maze
+function Cell(i, j) {
+  this.i = i;
+  this.j = j;
+  this.walls = [true, true, true, true];
+  this.visited = false;
+
+	//checks that the neighbors are real and they have positions\\
+  this.checkNeighbors = function() {
+    let neighbors = [];
+
+    let top = grid[index(i,j-1)];
+    let right = grid[index(i+1,j)];
+    let bottom = grid[index(i,j+1)];
+    let left = grid[index(i-1,j)];
+
+    if (top && !top.visited) { //makes sure it exists and hasnt visited it
+      neighbors.push(top);
+    }
+    if (right && !right.visited) {
+      neighbors.push(right);
+    }
+    if (bottom && !bottom.visited) {
+      neighbors.push(bottom);
+    }
+    if (left && !left.visited) {
+      neighbors.push(left);
+    }
+
+    if (neighbors.length > 0) {
+      let r = floor(random(0, neighbors.length));
+      return neighbors[r];
+    } else {
+      return undefined;
+    }
+		
+  }
+	
+	
+  this.highlight = function() { //the way that makes it appear that walls are removed
+    let x = this.i*w;
+    let y = this.j*w;
+    noStroke();
+    fill(255,98,80);
+    rect(x, y, w, w);
+  }
+	
+	this.end = function(){//suppose to create a rectangle to show end
+		let x = this.i*w;
+		let y = this.j*w;
+		fill(0,137,0,100);
+		rect(x,y,w,w);
+	}
+  //creates the grid\\
+  this.show = function() {
+    let x = this.i*w;
+    let y = this.j*w;
+    stroke(255);
+    if (this.walls[0]) {
+      line(x,y,x+w,y);
+    }
+    if (this.walls[1]) {
+      line(x+w,y,x+w,y+w);
+    }
+    if (this.walls[2]) {
+      line(x+w,y+w,x,y+w);
+    }
+    if (this.walls[3]) {
+      line(x,y+w,x,y);
+    }
+    if (this.visited) {
+      noStroke();
+      fill(255,0,255);
+      rect(x,y,w,w);
+    }
+  }
+}
+
